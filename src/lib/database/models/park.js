@@ -21,10 +21,10 @@ const schemma = new mongoose.Schema({
 		required: true,
 		default: false
 	},
-	vehicle: {
-		type: String,
+	car: {
+		type: Boolean,
 		required: true,
-		default: 'car'
+		default: true
 	}
 });
 

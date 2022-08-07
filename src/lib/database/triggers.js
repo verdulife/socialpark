@@ -1,7 +1,7 @@
 import Park from '$lib/database/models/park';
 
 export async function addPark(data) {
-	const newPark = new Park({ data });
+	const newPark = new Park(data);
 	await newPark.save();
 
 	return newPark;
@@ -11,4 +11,10 @@ export async function getParks() {
 	const parks = await Park.find({});
 
 	return parks;
+}
+
+export async function deletePark(park) {
+	const deleted = await Park.findOneAndDelete({ _id: park._id });
+
+	return deleted;
 }

@@ -23,7 +23,7 @@
 <style lang="scss">
 	.logo {
 		position: absolute;
-		top: -40px;
+		top: -10%;
 		transform: translateY(-100%);
     height: 15vh;
     max-height: 117px;

@@ -6,8 +6,7 @@
 	<div class="map-wrapper xfill grow">
 		<LeafletMap />
 	</div>
-
-	<div class="content-wrapper xfill grow">
+	<div class="content-wrapper xfill">
 		<slot />
 	</div>
 </main>
@@ -19,6 +18,7 @@
 	}
 
 	.content-wrapper {
+		margin-top: -60px;
 		z-index: 1;
 	}
 </style>
