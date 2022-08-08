@@ -1,12 +1,11 @@
 <script>
-	import { appState } from '$lib/stores.js';
+	import { userState, appState } from '$lib/stores.js';
 
 	function start() {
+		$userState.first_visit = false;
 		$appState = 'leave';
 	}
 </script>
-
-<img src="/social-park.svg" alt="Social Park logotype" class="logo" />
 
 <h1 class="xfill">Aparcar no<br />es facil 😭</h1>
 
@@ -21,19 +20,10 @@
 <button class="pri round big" on:click={start}>Emepezemos</button>
 
 <style lang="scss">
-	.logo {
-		position: absolute;
-		top: -10%;
-		transform: translateY(-100%);
-    height: 15vh;
-    max-height: 117px;
-		object-fit: contain;
-	}
-
 	h1 {
 		font-size: 2.5em;
 		font-weight: 700;
-		margin-top: 20px;
+		margin-top: 30px;
 	}
 
 	h3 {
@@ -48,6 +38,6 @@
 		width: 70%;
 		font-weight: bold;
 		color: #fff;
-    margin-top: auto;
+		margin-top: auto;
 	}
 </style>

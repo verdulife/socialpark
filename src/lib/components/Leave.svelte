@@ -1,7 +1,8 @@
 <script>
-	import { geolocation } from '$lib/stores.js';
+	import { geolocation, userState } from '$lib/stores.js';
 
-	let vehicle, park;
+	let vehicle = $userState.car;
+	let park = $userState.paid;
 
 	async function leave() {
 		const req = await fetch('/api/add', {
@@ -23,6 +24,8 @@
 			return;
 		}
 
+		$userState.car = vehicle;
+		$userState.paid = park;
 		alert('Successfully added your leave.');
 	}
 </script>
@@ -76,6 +79,7 @@
 <style lang="scss">
 	form {
 		gap: 20px;
+		margin-top: 30px;
 	}
 
 	h1 {

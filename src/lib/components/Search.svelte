@@ -6,6 +6,19 @@
 	$: realTime = parks;
 	let searchState = 'car';
 
+	$: console.log(parks);
+
+	async function getStreet() {
+		const req = await fetch(
+			`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${$geolocation[0]}&lon=${$geolocation[1]}`
+		);
+
+		const res = await req.json();
+		const { house_number, road } = res.address;
+
+		return { house_number, road };
+	}
+
 	async function getParks() {
 		const req = await fetch('/api/get');
 
@@ -23,7 +36,8 @@
 		$markers = notDone.map((park) => {
 			return {
 				id: park._id,
-				location: [park.latitude, park.longitude]
+				location: [park.latitude, park.longitude],
+				paid: park.paid
 			};
 		});
 
@@ -32,8 +46,7 @@
 				user_latitude: $geolocation[0],
 				user_longitude: $geolocation[1],
 				park_latitude: park.latitude,
-				park_longitude: park.longitude,
-				unit: 'm'
+				park_longitude: park.longitude
 			});
 			const timeFormat = timeAgo({ user_time: new Date(), park_time: park.timestamp });
 
@@ -47,11 +60,32 @@
 		});
 	}
 
+	getStreet();
+
 	getParks();
 	setInterval(getParks, 5000);
 
-	function notify() {
-		console.log('notify');
+	async function notify(_id) {
+		const check = confirm('¿Ya esta ocupada?');
+
+		console.log(_id);
+
+		if (check) {
+			const req = await fetch('/api/delete', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ _id })
+			});
+
+			if (!req.ok) {
+				alert('Something went wrong. Please try again.');
+				return;
+			}
+
+			alert('Gracias por su colaboración');
+		}
 	}
 </script>
 
@@ -68,17 +102,20 @@
 
 <div class="scroll">
 	<ul class="col xfill">
-		{#each realTime as { distance, timeAgo, paid }}
+		{#each realTime as { _id, distance, timeAgo, paid, street }}
 			<li class="xfill">
 				<article class="row jbetween acenter xfill nowrap">
 					<div class="distance col fcenter">
 						<img src="/{paid ? 'paid' : 'park'}.png" alt="Tipo de plaza" />
-						<p>{distance}m</p>
+						<p>{distance}km</p>
 					</div>
 
-					<h2 class="grow">{timeAgo}</h2>
+					<div class="info col grow">
+						<h2>{timeAgo}</h2>
+						<p>{street}</p>
+					</div>
 
-					<div class="icon" on:click={notify}>
+					<div class="icon" on:click={() => notify(_id)}>
 						<img src="/plane.png" alt="Action" />
 					</div>
 				</article>
@@ -91,6 +128,7 @@
 	h1 {
 		font-size: 26px;
 		font-weight: 700;
+		margin-top: 30px;
 	}
 
 	p {
@@ -118,6 +156,7 @@
 	.distance {
 		min-width: 70px;
 		height: 70px;
+		gap: 4px;
 		background: var(--color-sec-light);
 		font-weight: 700;
 		border-radius: 1em;
@@ -126,12 +165,20 @@
 			width: 30px;
 			height: 30px;
 		}
+
+		p {
+			color: #fff;
+			line-height: 1;
+		}
+	}
+
+	.info {
+		padding: 0 20px;
 	}
 
 	h2 {
 		font-size: 20px;
 		font-weight: 500;
-		padding: 0 20px;
 	}
 
 	.icon {

@@ -12,6 +12,7 @@
 
 <style lang="scss">
 	.outer {
+		padding: 10px;
 		z-index: 1;
 	}
 	.inner {

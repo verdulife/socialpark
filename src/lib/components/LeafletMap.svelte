@@ -24,8 +24,17 @@
 			iconSize: [38, 38]
 		});
 
+		const paidIcon = L.icon({
+			iconUrl: 'paid.png',
+			iconSize: [38, 38]
+		});
+
 		$markers.forEach((marker) => {
-			leaflet.marker(marker.location, { icon: parkIcon }).addTo(map);
+			if (marker.paid) {
+				leaflet.marker(marker.location, { icon: paidIcon }).addTo(map);
+			} else {
+				leaflet.marker(marker.location, { icon: parkIcon }).addTo(map);
+			}
 		});
 	}
 
@@ -33,7 +42,7 @@
 		async function onSuccess(position) {
 			const { latitude, longitude } = position.coords;
 			leaflet = await import('leaflet');
-			map = leaflet.map('map', { zoomControl: false }).setView([latitude, longitude], 17);
+			map = leaflet.map('map', { zoomControl: false }).setView([latitude, longitude], 15);
 
 			$geolocation = [latitude, longitude];
 

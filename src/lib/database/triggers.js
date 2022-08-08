@@ -13,8 +13,8 @@ export async function getParks() {
 	return parks;
 }
 
-export async function deletePark(park) {
-	const deleted = await Park.findOneAndDelete({ _id: park._id });
+export async function deletePark(_id) {
+	const deleted = await Park.findOneAndDelete({ _id });
 
 	return deleted;
 }

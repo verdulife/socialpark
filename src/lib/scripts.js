@@ -1,4 +1,4 @@
-export function distance({ park_latitude, user_latitude, park_longitude, user_longitude, unit }) {
+export function distance({ park_latitude, user_latitude, park_longitude, user_longitude }) {
 	park_longitude = (park_longitude * Math.PI) / 180;
 	user_longitude = (user_longitude * Math.PI) / 180;
 	park_latitude = (park_latitude * Math.PI) / 180;
@@ -13,7 +13,6 @@ export function distance({ park_latitude, user_latitude, park_longitude, user_lo
 	let c = 2 * Math.asin(Math.sqrt(a));
 	let r = 6371;
 
-	if (unit === 'm') return c * r * 1000;
 	return c * r;
 }
 

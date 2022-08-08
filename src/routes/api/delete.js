@@ -1,8 +1,8 @@
 import { deletePark } from '$lib/database/triggers';
 
-export function POST({ request }) {
-	const { park } = request.json();
-	const deleted = deletePark(park);
+export async function POST({ request }) {
+	const _id = await request.json();
+	const deleted = await deletePark(_id);
 
 	return {
 		status: 200,
