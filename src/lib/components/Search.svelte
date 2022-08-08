@@ -6,19 +6,6 @@
 	$: realTime = parks;
 	let searchState = 'car';
 
-	$: console.log(parks);
-
-	async function getStreet() {
-		const req = await fetch(
-			`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${$geolocation[0]}&lon=${$geolocation[1]}`
-		);
-
-		const res = await req.json();
-		const { house_number, road } = res.address;
-
-		return { house_number, road };
-	}
-
 	async function getParks() {
 		const req = await fetch('/api/get');
 
@@ -29,28 +16,50 @@
 
 		const res = await req.json();
 
-		const notDone = res.parks.filter(
-			(park) => timeAgo({ user_time: new Date(), park_time: park.timestamp }) !== null
+		const done = res.parks.filter(
+			(park) => timeAgo({ user_time: new Date(), park_time: park.timestamp }) === null
 		);
 
-		$markers = notDone.map((park) => {
+		done.forEach(async (park) => {
+			const req = await fetch(`/api/delete`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					_id: park._id
+				})
+			});
+
+			if (!req.ok) {
+				alert('Something went wrong. Please try again.');
+				return;
+			}
+		});
+
+		$markers = res.parks.map((park) => {
+			const { selected } = $markers.find((marker) => marker._id === park._id) || false;
+
 			return {
-				id: park._id,
+				_id: park._id,
 				location: [park.latitude, park.longitude],
-				paid: park.paid
+				paid: park.paid,
+				selected: selected || false
 			};
 		});
 
-		parks = notDone.map((park) => {
+		parks = res.parks.map((park) => {
+			const timeFormat = timeAgo({ user_time: new Date(), park_time: park.timestamp });
 			const calc_distance = distance({
 				user_latitude: $geolocation[0],
 				user_longitude: $geolocation[1],
 				park_latitude: park.latitude,
 				park_longitude: park.longitude
 			});
-			const timeFormat = timeAgo({ user_time: new Date(), park_time: park.timestamp });
 
 			park.distance = calc_distance;
+			const { selected } = $markers.find((marker) => marker._id === park._id) || false;
+			park.selected = selected || false;
 
 			if (timeFormat === 0) park.timeAgo = 'Menos de 1 minuto';
 			else if (timeFormat === 1) park.timeAgo = `Hace ${timeFormat} minuto`;
@@ -60,15 +69,11 @@
 		});
 	}
 
-	getStreet();
-
 	getParks();
 	setInterval(getParks, 5000);
 
 	async function notify(_id) {
 		const check = confirm('¿Ya esta ocupada?');
-
-		console.log(_id);
 
 		if (check) {
 			const req = await fetch('/api/delete', {
@@ -87,6 +92,17 @@
 			alert('Gracias por su colaboración');
 		}
 	}
+
+	function selectPark(_id) {
+		const markerSelected = $markers.find((marker) => marker._id === _id);
+		const parkSelected = parks.find((park) => park._id === _id);
+
+		markerSelected.selected = !markerSelected.selected;
+		parkSelected.selected = !parkSelected.selected;
+
+		$markers = $markers;
+		parks = parks;
+	}
 </script>
 
 <div class="topbar row jbetween acenter xfill">
@@ -102,16 +118,16 @@
 
 <div class="scroll">
 	<ul class="col xfill">
-		{#each realTime as { _id, distance, timeAgo, paid, street }}
+		{#each realTime as { _id, distance, timeAgo, paid, street, selected }}
 			<li class="xfill">
 				<article class="row jbetween acenter xfill nowrap">
-					<div class="distance col fcenter">
+					<div class="distance col fcenter" on:click={() => selectPark(_id)} class:selected>
 						<img src="/{paid ? 'paid' : 'park'}.png" alt="Tipo de plaza" />
-						<p>{distance}km</p>
+						<p>{distance}</p>
 					</div>
 
 					<div class="info col grow">
-						<h2>{timeAgo}</h2>
+						<h2>{timeAgo || 'Más de 10 minutos'}</h2>
 						<p>{street}</p>
 					</div>
 
@@ -170,6 +186,10 @@
 			color: #fff;
 			line-height: 1;
 		}
+	}
+
+	.selected {
+		background: var(--color-sec);
 	}
 
 	.info {

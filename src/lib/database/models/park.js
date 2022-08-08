@@ -11,6 +11,11 @@ const schemma = new mongoose.Schema({
 		required: true,
 		default: 0
 	},
+	street: {
+		type: String,
+		required: true,
+		default: ''
+	},
 	timestamp: {
 		type: Date,
 		required: true,

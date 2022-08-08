@@ -18,23 +18,19 @@
 		setTimeout(resize, 0);
 	}
 
-	$: if (leaflet && $markers.length > 0) {
-		const parkIcon = L.icon({
+	$: if (leaflet && $markers) {
+		const parkIcon = leaflet.icon({
 			iconUrl: 'park.png',
 			iconSize: [38, 38]
 		});
 
-		const paidIcon = L.icon({
-			iconUrl: 'paid.png',
-			iconSize: [38, 38]
+		const parkIconSelected = leaflet.icon({
+			iconUrl: 'park.png',
+			iconSize: [48, 48]
 		});
 
 		$markers.forEach((marker) => {
-			if (marker.paid) {
-				leaflet.marker(marker.location, { icon: paidIcon }).addTo(map);
-			} else {
-				leaflet.marker(marker.location, { icon: parkIcon }).addTo(map);
-			}
+			leaflet.marker(marker.location, { icon: parkIcon }).addTo(map);
 		});
 	}
 
@@ -42,7 +38,9 @@
 		async function onSuccess(position) {
 			const { latitude, longitude } = position.coords;
 			leaflet = await import('leaflet');
-			map = leaflet.map('map', { zoomControl: false }).setView([latitude, longitude], 15);
+			map = map || leaflet.map('map', { zoomControl: false });
+
+			map.setView([latitude, longitude], 15);
 
 			$geolocation = [latitude, longitude];
 
@@ -53,9 +51,14 @@
 				})
 				.addTo(map);
 
-			const carIcon = L.icon({
+			const carIcon = leaflet.icon({
 				iconUrl: 'car.png',
-				iconSize: [38, 38]
+				iconSize: [30, 30]
+			});
+
+			const motoIcon = leaflet.icon({
+				iconUrl: 'moto.png',
+				iconSize: [30, 30]
 			});
 
 			leaflet.marker([latitude, longitude], { icon: carIcon }).addTo(map);

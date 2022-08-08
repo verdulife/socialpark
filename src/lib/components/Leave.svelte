@@ -4,7 +4,21 @@
 	let vehicle = $userState.car;
 	let park = $userState.paid;
 
+	async function getStreet(latitude, longitude) {
+		const req = await fetch(
+			`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+		);
+
+		const res = await req.json();
+		const { road, house_number } = res.address;
+
+		return { road, house_number };
+	}
+
 	async function leave() {
+		const { road, house_number } = await getStreet($geolocation[0], $geolocation[1]);
+		console.log(road, house_number);
+
 		const req = await fetch('/api/add', {
 			method: 'POST',
 			headers: {
@@ -15,7 +29,8 @@
 				longitude: $geolocation[1],
 				car: vehicle,
 				paid: park,
-				timestamp: new Date()
+				timestamp: new Date(),
+				street: `${road} ${house_number}`
 			})
 		});
 

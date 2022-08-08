@@ -4,16 +4,18 @@ export function distance({ park_latitude, user_latitude, park_longitude, user_lo
 	park_latitude = (park_latitude * Math.PI) / 180;
 	user_latitude = (user_latitude * Math.PI) / 180;
 
-	let dlon = user_longitude - park_longitude;
-	let dlat = user_latitude - park_latitude;
-	let a =
+	const dlon = user_longitude - park_longitude;
+	const dlat = user_latitude - park_latitude;
+	const a =
 		Math.pow(Math.sin(dlat / 2), 2) +
 		Math.cos(park_latitude) * Math.cos(user_latitude) * Math.pow(Math.sin(dlon / 2), 2);
 
-	let c = 2 * Math.asin(Math.sqrt(a));
-	let r = 6371;
+	const c = 2 * Math.asin(Math.sqrt(a));
+	const r = 6371;
+	const result = Math.round(c * r * 1000);
 
-	return c * r;
+	if (result.toString().length > 3) return `${(result / 1000).toFixed(1)}km`;
+	return `${result}m`;
 }
 
 export function timeAgo({ park_time, user_time }) {
