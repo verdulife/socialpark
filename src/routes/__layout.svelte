@@ -41,6 +41,7 @@
 	}
 
 	.map-wrapper {
+		position: absolute;
 		max-height: calc(100% - 300px);
 		background: green;
 		z-index: 0;
