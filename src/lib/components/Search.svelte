@@ -145,6 +145,7 @@
 
 <style lang="scss">
 	h1 {
+		color: #fff;
 		font-size: 26px;
 		font-weight: 700;
 		margin-top: 30px;

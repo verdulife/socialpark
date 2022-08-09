@@ -8,10 +8,10 @@
 <article class="col acenter fill">
 	{#if $appState === 'intro'}
 		<Intro />
-	{:else if $appState === 'leave'}
-		<Leave />
-	{:else if $appState === 'search'}
+	{:else if $appState === 'buscar'}
 		<Search />
+	{:else if $appState === 'anunciar'}
+		<Leave />
 	{/if}
 </article>
 

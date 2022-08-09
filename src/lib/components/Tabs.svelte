@@ -1,46 +1,36 @@
 <script>
 	import { appState } from '$lib/stores.js';
 
-	function tab(state) {
-		$appState = state;
+	function tab() {
+		$appState = $appState === 'anunciar' ? 'buscar' : 'anunciar';
 	}
 </script>
 
 <nav class="row">
-	<ul class="row nowrap">
-		<li class="row" on:click={() => tab('leave')}>
-			<span class="row fcenter nowrap" class:active={$appState === 'leave'}>
-				<img src="/plane.png" alt="Dejo" />
-				Dejo
-			</span>
-		</li>
-		<li class="row" on:click={() => tab('search')}>
-			<span class="row fcenter nowrap" class:active={$appState === 'search'}>
-				<img src="/search.png" alt="Busco" />
-				Busco
-			</span>
-		</li>
-	</ul>
+	<span class="row fcenter" on:click={tab}>
+		{$appState === 'anunciar' ? 'buscar' : 'anunciar'}
+	</span>
 </nav>
 
 <style lang="scss">
 	nav {
 		position: absolute;
-		top: 20px;
-		left: 50%;
-		transform: translateX(-50%);
+		top: -70px;
+		left: 20px;
 	}
 
 	span {
-		width: 140px;
-		gap: 10px;
-		background: rgba(#000, 0.3);
+		width: 115px;
+		height: 50px;
+		background: rgba(#000, 0.5);
 		backdrop-filter: blur(10px);
 		color: #fff;
-		font-size: 18px;
-		font-weight: 400;
-		box-shadow: inset -1px -1px 1px 0 rgba(#000, 0.4), inset 1px 1px 1px 0 rgba(#fff, 0.6);
-		padding: 16px 24px;
+		font-size: 16px;
+		font-weight: 500;
+		text-align: center;
+		text-transform: capitalize;
+		border-radius: 1.25em;
+		padding: 0 24px;
 	}
 
 	li:first-child > span {

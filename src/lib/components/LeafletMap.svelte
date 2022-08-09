@@ -28,10 +28,10 @@
 		});
 	}
 
-	function centerUser() {
+	/* function centerUser() {
 		map.setView([$geolocation[0], $geolocation[1]], map.getZoom() || 15);
 		centered = true;
-	}
+	} */
 
 	async function onStart(position) {
 		const { latitude, longitude } = position.coords;
@@ -89,34 +89,8 @@
 
 <div id="map" />
 
-{#if !centered}
-	<div class="icon row fcenter" on:click={centerUser}>
-		<img src="/arrow.svg" alt="Centrar" />
-		<p>Centrar</p>
-	</div>
-{/if}
-
 <style lang="scss">
 	#map {
 		height: 100%;
-	}
-
-	.icon {
-		position: absolute;
-		bottom: 80px;
-		left: 20px;
-		gap: 4px;
-		background: rgba(#fff, 0.7);
-		border-radius: 1em;
-		padding: 6px 12px;
-		z-index: 999;
-
-		img {
-			width: 16px;
-		}
-
-		p {
-			font-weight: 500;
-		}
 	}
 </style>
