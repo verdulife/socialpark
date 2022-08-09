@@ -1,10 +1,9 @@
 <script>
 	import { distance, timeAgo } from '$lib/scripts';
-	import { geolocation, markers } from '$lib/stores.js';
+	import { geolocation, markers, userState } from '$lib/stores.js';
 
 	let parks = [];
 	$: realTime = parks;
-	let searchState = 'car';
 
 	async function getParks() {
 		const req = await fetch('/api/get');
@@ -38,13 +37,13 @@
 		});
 
 		$markers = res.parks.map((park) => {
-			const { selected } = $markers.find((marker) => marker._id === park._id) || false;
+			/* const { selected } = $markers.find((marker) => marker._id === park._id) || false; */
 
 			return {
 				_id: park._id,
 				location: [park.latitude, park.longitude],
-				paid: park.paid,
-				selected: selected || false
+				paid: park.paid
+				/* selected: selected || false */
 			};
 		});
 
@@ -93,7 +92,7 @@
 		}
 	}
 
-	function selectPark(_id) {
+	/* function selectPark(_id) {
 		const markerSelected = $markers.find((marker) => marker._id === _id);
 		const parkSelected = parks.find((park) => park._id === _id);
 
@@ -102,6 +101,10 @@
 
 		$markers = $markers;
 		parks = parks;
+	} */
+
+	function changeFilter() {
+		$userState.car = !$userState.car;
 	}
 </script>
 
@@ -111,8 +114,8 @@
 		<p>{parks.length} posibles plazas libres</p>
 	</div>
 
-	<div class="type row fcenter">
-		<img class="fill" src="/{searchState === 'car' ? 'car' : 'moto'}.png" alt="Tipo de plaza" />
+	<div class="type row fcenter" on:click={changeFilter}>
+		<img class="fill" src="/{$userState.car ? 'car' : 'moto'}.png" alt="Tipo de plaza" />
 	</div>
 </div>
 

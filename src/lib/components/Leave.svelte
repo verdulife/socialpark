@@ -5,14 +5,18 @@
 	let park = $userState.paid;
 
 	async function getStreet(latitude, longitude) {
-		const req = await fetch(
-			`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
-		);
+		try {
+			const req = await fetch(
+				`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+			);
 
-		const res = await req.json();
-		const { road, house_number } = res.address;
+			const res = await req.json();
+			const { road, house_number } = res.address;
 
-		return { road, house_number };
+			return { road, house_number };
+		} catch (error) {
+			return { road: 'Sin', house_number: 'información' };
+		}
 	}
 
 	async function leave() {
@@ -30,7 +34,7 @@
 				car: vehicle,
 				paid: park,
 				timestamp: new Date(),
-				street: `${road} ${house_number}`
+				street: `${road || ''} ${house_number || ''}`
 			})
 		});
 
